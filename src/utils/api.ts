@@ -9,7 +9,7 @@ import {
   SnapshotResponse,
 } from "@/utils/types";
 
-const API_BASE_URL = "https://test.watercollector.icu/api/v1";
+const API_BASE_URL = "https://api.watercollector.icu/api/v1";
 
 async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {

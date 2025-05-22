@@ -38,7 +38,7 @@ export const useSearchStore = create<SearchState>()(
         set({ isLoading: true });
         
         try {
-          const response = await fetch("https://test.watercollector.icu/api/v1/items/minimal");
+          const response = await fetch("https://api.watercollector.icu/api/v1/items/minimal");
           const data: MinimalItemsResponse = await response.json();
           
           set({
@@ -69,7 +69,7 @@ export const useSearchStore = create<SearchState>()(
         
         try {
           const response = await fetch(
-            `https://test.watercollector.icu/api/v1/items/minimal/diff?from=${encodeURIComponent(state.lastUpdated)}`
+            `https://api.watercollector.icu/api/v1/items/minimal/diff?from=${encodeURIComponent(state.lastUpdated)}`
           );
           const data: MinimalItemsDiffResponse = await response.json();
           
