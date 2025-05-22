@@ -114,7 +114,7 @@ export default async function OrderBookPage({ params }: OrderBookPageProps) {
         </Button>
         
         <h1 className="text-3xl font-bold">{item.name} - Order Book</h1>
-        <p className="text-gray-400 mt-1">
+        <p className="text-gray-400 mt-1 flex items-center">
           <Clock className="inline mr-2 h-4 w-4" />
           Last updated {formattedSnapshotDate}
         </p>
