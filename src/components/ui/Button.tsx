@@ -3,6 +3,7 @@
 import { ReactNode } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/utils/utils";
+import { useRouter } from "next/navigation";
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none",
@@ -35,12 +36,20 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   children: ReactNode;
+  path?: string;
 }
 
-const Button = ({ children, className, variant, size, ...props }: ButtonProps) => {
+const Button = ({ children, className, variant, size, path, onClick, ...props }: ButtonProps) => {
+  const router = useRouter();
+
+  const handleClick = () => {
+    if (path) router.push(path);
+  };
+
   return (
     <button
-      className={cn(buttonVariants({ variant, size, className }))}
+      className={cn(buttonVariants({ variant, size, className })) + " cursor-pointer"}
+      onClick={onClick ? onClick : handleClick}
       {...props}
     >
       {children}

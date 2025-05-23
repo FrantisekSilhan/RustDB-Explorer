@@ -1,7 +1,5 @@
-// app/items/[type]/[identifier]/orderbook/page.tsx
 import { Suspense } from "react";
 import { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Clock } from "lucide-react";
 import { api } from "@/utils/api";
@@ -102,11 +100,11 @@ export default async function OrderBookPage({ params }: OrderBookPageProps) {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <Button variant="outline" size="sm" className="mb-4">
-          <Link href={`/items/${type}/${identifier}`} className="flex items-center">
+        <Button path={`/items/${type}/${identifier}`} variant="outline" size="sm" className="mb-4">
+          <div className="flex items-center">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Item
-          </Link>
+          </div>
         </Button>
         
         <h1 className="text-3xl font-bold">{item.name} - Order Book</h1>

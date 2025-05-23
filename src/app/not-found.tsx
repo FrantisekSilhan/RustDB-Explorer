@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 
 export default function NotFound() {
@@ -9,8 +8,8 @@ export default function NotFound() {
       <p className="text-gray-400 max-w-md mb-8">
         The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.
       </p>
-      <Button variant="gradient">
-        <Link href="/">Back to Home</Link>
+      <Button path="/" variant="gradient">
+        Back to Home
       </Button>
     </div>
   );

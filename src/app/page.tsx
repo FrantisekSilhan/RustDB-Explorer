@@ -33,18 +33,14 @@ export default async function Home() {
               </div>
               
               <div className="mt-8 flex flex-wrap gap-4">
-                <Button variant="gradient" size="lg">
-                  <Link href="/items" className="flex items-center">
-                    Explore Items
-                    <ChevronRight className="ml-1 h-4 w-4" />
-                  </Link>
+                <Button path="/items" variant="gradient" size="lg">
+                  Explore Items
+                  <ChevronRight className="ml-1 h-4 w-4" />
                 </Button>
                 
-                <Button variant="outline" size="lg">
-                  <Link href="/trending" className="flex items-center">
-                    <TrendingUp className="mr-2 h-4 w-4" />
-                    View Trends
-                  </Link>
+                <Button path="/trending" variant="outline" size="lg">
+                  <TrendingUp className="mr-2 h-4 w-4" />
+                  View Trends
                 </Button>
               </div>
             </div>

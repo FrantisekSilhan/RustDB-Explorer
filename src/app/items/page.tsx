@@ -4,6 +4,7 @@ import { api } from "@/utils/api";
 import SearchBar from "@/components/ui/SearchBar";
 import ItemGrid from "@/components/ui/ItemGrid";
 import Pagination from "@/components/ui/Pagination";
+import { ItemsPageTracker } from "@/components/items/ItemsPageTracker";
 
 export const metadata: Metadata = {
   title: "Browse Rust Items",
@@ -23,11 +24,12 @@ export default async function ItemsPage({ searchParams: params }: ItemsPageProps
   const search = searchParams.search || "";
   const limit = 30;
   
-  // Fetch items
   const itemsData = await api.items.getAll(page, limit, search);
   
   return (
     <div className="container mx-auto px-4 py-8">
+      <ItemsPageTracker />
+
       <h1 className="text-3xl font-bold mb-6">Browse Rust Items</h1>
       
       <div className="mb-8 max-w-xl">
