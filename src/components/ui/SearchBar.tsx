@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useSearchStore } from "@/utils/search-store";
 import { Search, X } from "lucide-react";
 import Link from "next/link";
@@ -23,7 +23,6 @@ export default function SearchBar({
   const [focused, setFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  const pathname = usePathname();
   
   const { 
     initialize, 
@@ -34,35 +33,35 @@ export default function SearchBar({
     isInitialized 
   } = useSearchStore();
 
-  // Initialize search store on component mount
   useEffect(() => {
     if (!isInitialized) {
       initialize();
     }
   }, [initialize, isInitialized]);
 
-  // Initialize with initial value if provided
   useEffect(() => {
     if (initialValue) {
       setSearchTerm(initialValue);
     }
   }, [initialValue, setSearchTerm]);
 
-  // Autofocus the input if needed
   useEffect(() => {
     if (autofocus && inputRef.current) {
       inputRef.current.focus();
     }
   }, [autofocus]);
 
+  const handleClearSearch = () => {
+    setSearchTerm("");
+    clearSearch();
+    router.push("/items");
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (searchTerm.trim()) {
-      // Navigate to search page with the search term
-      if (pathname !== "/search") {
-        router.push(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
-      }
+      router.push(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
     }
   };
 
@@ -86,7 +85,7 @@ export default function SearchBar({
           {searchTerm && (
             <button
               type="button"
-              onClick={() => clearSearch()}
+              onClick={handleClearSearch}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
             >
               <X className="h-4 w-4" />
@@ -95,7 +94,6 @@ export default function SearchBar({
         </div>
       </form>
 
-      {/* Search Results Dropdown */}
       {showResults && focused && searchTerm && searchResults.length > 0 && (
         <div className="absolute z-50 w-full mt-1 bg-gray-900 border border-gray-700 rounded-md shadow-lg max-h-80 overflow-y-auto">
           <ul className="py-1">
@@ -104,7 +102,7 @@ export default function SearchBar({
                 <Link
                   href={`/items/name/${encodeURIComponent(item.name)}`}
                   className="flex items-center px-4 py-2 hover:bg-gray-800"
-                  onClick={() => clearSearch()}
+                  onClick={handleClearSearch}
                 >
                   <div className="flex-shrink-0 w-8 h-8 mr-3 bg-gray-800 rounded overflow-hidden">
                     <Image
