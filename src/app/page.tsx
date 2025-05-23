@@ -45,7 +45,7 @@ export default async function Home() {
               </div>
             </div>
             
-            <div className="md:w-1/2 relative sm:hidden md:block">
+            <div className="md:w-1/2 relative hidden md:block">
               <div className="p-4">
                 <div className="flex items-center justify-center w-full h-64 md:h-80">
                   <svg
