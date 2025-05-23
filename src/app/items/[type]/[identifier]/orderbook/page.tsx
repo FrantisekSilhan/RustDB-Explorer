@@ -8,8 +8,8 @@ import { api } from "@/utils/api";
 import { Button } from "@/components/ui/Button";
 import OrderBookChart from "@/components/charts/OrderBookChart";
 import { formatDistanceToNow } from "date-fns";
+import OrderBook from "@/components/items/OrderBook";
 
-// Define valid types
 const validTypes = ["item-id", "class-id", "name"];
 
 interface OrderBookPageProps {
@@ -31,7 +31,6 @@ export async function generateMetadata({
   }
   
   try {
-    // Fetch item data based on type
     let item;
     switch (type) {
       case "item-id":
@@ -66,12 +65,10 @@ export async function generateMetadata({
 export default async function OrderBookPage({ params }: OrderBookPageProps) {
   const { type, identifier } = await params;
   
-  // Validate type
   if (!validTypes.includes(type)) {
     notFound();
   }
   
-  // Fetch item and order book data based on type
   let item;
   let orderBook;
   
@@ -99,7 +96,6 @@ export default async function OrderBookPage({ params }: OrderBookPageProps) {
     notFound();
   }
   
-  // Format snapshot date
   const snapshotDate = new Date(orderBook.fetched_at);
   const formattedSnapshotDate = formatDistanceToNow(snapshotDate, { addSuffix: true });
   
@@ -120,7 +116,6 @@ export default async function OrderBookPage({ params }: OrderBookPageProps) {
         </p>
       </div>
       
-      {/* Order Book Chart */}
       <div className="bg-gray-800 rounded-lg p-6 mb-8">
         <h2 className="text-xl font-bold mb-4">Order Book Visualization</h2>
         
@@ -149,74 +144,7 @@ export default async function OrderBookPage({ params }: OrderBookPageProps) {
         </div>
       </div>
       
-      {/* Order Book Tables */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Sell Orders */}
-        <div>
-          <h2 className="text-xl font-bold mb-4 text-red-500">Sell Orders</h2>
-          <div className="bg-gray-800 rounded-lg overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-900">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Price</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Quantity</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Cumulative</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-700">
-                  {orderBook.sell_orders.map((order, index) => (
-                    <tr key={`sell-${index}`}>
-                      <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-white">
-                        ${(order.price / 100).toFixed(2)}
-                      </td>
-                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-300">
-                        {order.quantity}
-                      </td>
-                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-300">
-                        {order.cumulative_quantity}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-        
-        {/* Buy Orders */}
-        <div>
-          <h2 className="text-xl font-bold mb-4 text-green-500">Buy Orders</h2>
-          <div className="bg-gray-800 rounded-lg overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-900">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Price</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Quantity</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Cumulative</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-700">
-                  {orderBook.buy_orders.map((order, index) => (
-                    <tr key={`buy-${index}`}>
-                      <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-white">
-                        ${(order.price / 100).toFixed(2)}
-                      </td>
-                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-300">
-                        {order.quantity}
-                      </td>
-                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-300">
-                        {order.cumulative_quantity}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
+      <OrderBook orderBook={orderBook} />
     </div>
   );
 }
