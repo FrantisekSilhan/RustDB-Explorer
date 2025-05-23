@@ -198,7 +198,7 @@ export default async function OrderBookPage({ params }: OrderBookPageProps) {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-700">
-                  {orderBook.buy_orders.slice().reverse().map((order, index) => (
+                  {orderBook.buy_orders.map((order, index) => (
                     <tr key={`buy-${index}`}>
                       <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-white">
                         ${(order.price / 100).toFixed(2)}
