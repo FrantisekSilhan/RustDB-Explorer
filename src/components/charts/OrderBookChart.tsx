@@ -234,6 +234,9 @@ export default function OrderBookChart({
 
                 if (allIndexes.length === 0) return "";
 
+                const datasetIndex = tooltipItems[0].datasetIndex;
+                const direction = datasetIndex === 1 ? "or lower" : "or higher";
+
                 let closest = allIndexes[0];
                 let minDiff = Math.abs(hoveredPrice - closest.price);
                 for (let i = 1; i < allIndexes.length; i++) {
@@ -244,7 +247,7 @@ export default function OrderBookChart({
                   }
                 }
 
-                return `Price: $${closest.price.toFixed(2)}`;
+                return `Price: $${closest.price.toFixed(2)} ${direction}`;
               },
             },
           },
