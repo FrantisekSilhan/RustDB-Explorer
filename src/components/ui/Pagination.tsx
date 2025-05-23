@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "./Button";
@@ -9,61 +10,86 @@ interface PaginationProps {
   totalPages: number;
 }
 
-export default function Pagination({ currentPage, totalPages }: PaginationProps) {
+export default function Pagination({
+  currentPage,
+  totalPages,
+}: PaginationProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  
-  // Handle page change
+  const [editingEllipsis, setEditingEllipsis] = useState<number | null>(null);
+  const [inputValue, setInputValue] = useState("");
+
   const handlePageChange = (page: number) => {
-    // Create a new URLSearchParams instance
     const params = new URLSearchParams(searchParams.toString());
-    
-    // Update the page parameter
+
     params.set("page", page.toString());
-    
-    // Navigate to the new URL
+
     router.push(`${pathname}?${params.toString()}`);
   };
-  
-  // Generate page numbers to display
+
+  const handleEllipsisClick = (ellipsisIndex: number) => {
+    setEditingEllipsis(ellipsisIndex);
+    setInputValue("");
+  };
+
+  const handleInputSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const pageNumber = parseInt(inputValue);
+
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      handlePageChange(pageNumber);
+    }
+
+    setEditingEllipsis(null);
+    setInputValue("");
+  };
+
+  const handleInputBlur = () => {
+    setEditingEllipsis(null);
+    setInputValue("");
+  };
+
+  const handleInputKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Escape") {
+      setEditingEllipsis(null);
+      setInputValue("");
+    }
+  };
+
   const getPageNumbers = () => {
-    const pages: number[] = [];
-    
+    const pages: (number | string)[] = [];
+
     if (totalPages <= 7) {
-      // If there are 7 or fewer pages, show all pages
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
       }
     } else {
-      // Always include first page
       pages.push(1);
-      
+
       if (currentPage > 3) {
-        pages.push(-1); // Represents ellipsis
+        pages.push("ellipsis-start");
       }
-      
-      // Pages around current page
+
       const startPage = Math.max(2, currentPage - 1);
       const endPage = Math.min(totalPages - 1, currentPage + 1);
-      
+
       for (let i = startPage; i <= endPage; i++) {
         pages.push(i);
       }
-      
+
       if (currentPage < totalPages - 2) {
-        pages.push(-1); // Represents ellipsis
+        pages.push("ellipsis-end");
       }
-      
-      // Always include last page
+
       pages.push(totalPages);
     }
-    
+
     return pages;
   };
-  
+
   const pageNumbers = getPageNumbers();
-  
+
   return (
     <div className="flex items-center justify-center space-x-1 mt-8">
       <Button
@@ -76,25 +102,62 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
       >
         <ChevronLeft className="h-4 w-4" />
       </Button>
-      
-      {pageNumbers.map((page, i) => (
-        page === -1 ? (
-          <span key={`ellipsis-${i}`} className="px-3 py-2 text-gray-500">
-            ...
-          </span>
-        ) : (
+
+      {pageNumbers.map((page, i) => {
+        if (typeof page === "string") {
+          const ellipsisIndex = i;
+          const isEditing = editingEllipsis === ellipsisIndex;
+
+          if (isEditing) {
+            return (
+              <form
+                key={`ellipsis-${i}`}
+                onSubmit={handleInputSubmit}
+                className="inline-block"
+              >
+                <input
+                  type="number"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onBlur={handleInputBlur}
+                  onKeyDown={handleInputKeyDown}
+                  className="w-12 h-8 px-2 text-center text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-inner-spin-button]:m-0"
+                  placeholder="..."
+                  min="1"
+                  max={totalPages}
+                  autoFocus
+                />
+              </form>
+            );
+          }
+
+          return (
+            <button
+              key={`ellipsis-${i}`}
+              onClick={() => handleEllipsisClick(ellipsisIndex)}
+              className="px-3 py-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors cursor-pointer"
+              title="Click to go to specific page"
+            >
+              ...
+            </button>
+          );
+        }
+
+        return (
           <Button
             key={`page-${page}`}
             variant={currentPage === page ? "default" : "outline"}
             size="sm"
-            onClick={() => handlePageChange(page)}
-            className={currentPage === page ? "bg-orange-600" : "" + " cursor-pointer"}
+            onClick={() => handlePageChange(page as number)}
+            className={
+              currentPage === page ? "bg-orange-600" : "" + " cursor-pointer"
+            }
           >
             {page}
           </Button>
-        )
-      ))}
-      
+        );
+      })}
+
       <Button
         variant="outline"
         size="icon"
