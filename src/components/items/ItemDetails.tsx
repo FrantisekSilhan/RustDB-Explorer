@@ -1,6 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
-import { ExternalLink, Calendar, Tag, Database } from "lucide-react";
+import { ExternalLink, Database, Clock, BarChart2 } from "lucide-react";
 import { Item, Snapshot } from "@/utils/types";
 import { Button } from "@/components/ui/Button";
 import { formatRelativeTime } from "@/utils/utils";
@@ -14,14 +13,12 @@ interface ItemDetailsProps {
 
 export default function ItemDetails({ item, snapshot, type, identifier }: ItemDetailsProps) {
   const bgColor = item.background_color ? `#${item.background_color}` : "#1a1a1a";
-  const formattedAddedDate = formatRelativeTime(item.added_at);
   const formattedSnapshotDate = formatRelativeTime(snapshot.fetched_at);
 
   return (
-    <div>
+    <>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* Item Image */}
-        <div
+        <div 
           className="bg-opacity-80 rounded-xl overflow-hidden p-8 flex items-center justify-center"
           style={{ backgroundColor: bgColor }}
         >
@@ -34,65 +31,48 @@ export default function ItemDetails({ item, snapshot, type, identifier }: ItemDe
             priority
           />
         </div>
-
-        {/* Item Details */}
+        
         <div className="md:col-span-2">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div className="bg-gray-800 rounded-lg p-4">
               <h3 className="text-gray-400 text-sm mb-1">Item ID</h3>
               <p className="text-lg font-medium">{item.item_id}</p>
             </div>
-
+            
             <div className="bg-gray-800 rounded-lg p-4">
               <h3 className="text-gray-400 text-sm mb-1">Class ID</h3>
               <p className="text-lg font-medium">{item.class_id}</p>
             </div>
-
-            <div className="bg-gray-800 rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-1">
-                <Calendar className="text-gray-400 h-4 w-4" />
-                <h3 className="text-gray-400 text-sm">Added</h3>
-              </div>
-              <p className="text-lg font-medium">{formattedAddedDate}</p>
-            </div>
-
-            <div className="bg-gray-800 rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-1">
-                <Tag className="text-gray-400 h-4 w-4" />
-                <h3 className="text-gray-400 text-sm">Color</h3>
-              </div>
-              <div className="flex items-center gap-2">
-                <div 
-                  className="w-6 h-6 rounded-full border border-gray-700" 
-                  style={{ backgroundColor: bgColor }}
-                ></div>
-                <p className="font-medium uppercase">{item.background_color || "None"}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            
             <div className="bg-gray-800 rounded-lg p-4">
               <h3 className="text-gray-400 text-sm mb-1">Sell Orders</h3>
               <p className="text-lg font-medium">{snapshot.total_sell_requests}</p>
             </div>
-
+            
             <div className="bg-gray-800 rounded-lg p-4">
               <h3 className="text-gray-400 text-sm mb-1">Buy Orders</h3>
               <p className="text-lg font-medium">{snapshot.total_buy_requests}</p>
             </div>
           </div>
-
+          
+          <div className="bg-gray-800 rounded-lg p-4 mb-6">
+            <div className="flex items-center gap-2 mb-2">
+              <Clock className="text-gray-400 h-4 w-4" />
+              <h3 className="text-gray-400 text-sm">Last Updated</h3>
+            </div>
+            <p className="text-lg font-medium">{formattedSnapshotDate}</p>
+          </div>
+          
           <div className="flex flex-wrap gap-4">
-            <Button variant="gradient">
-              <Link href={`/items/${type}/${identifier}/orderbook`} className="flex items-center">
-                <Database className="mr-2 h-4 w-4" />
+            <Button path={`/items/${type}/${identifier}/orderbook`} variant="gradient">
+              <div className="flex items-center">
+                <BarChart2 className="mr-2 h-4 w-4" />
                 View Order Book
-              </Link>
+              </div>
             </Button>
-
+            
             <Button variant="outline">
-              <a
+              <a 
                 href={`https://steamcommunity.com/market/listings/252490/${encodeURIComponent(item.name)}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -105,13 +85,48 @@ export default function ItemDetails({ item, snapshot, type, identifier }: ItemDe
           </div>
         </div>
       </div>
-
-      <div className="mt-6 p-4 bg-gray-800 rounded-lg">
-        <div className="flex items-center gap-2 mb-2">
-          <Calendar className="text-gray-400 h-4 w-4" />
-          <p className="text-sm text-gray-400">Last market snapshot: {formattedSnapshotDate}</p>
+      
+      <div className="mt-12">
+        <h2 className="text-2xl font-bold mb-4">Market Data</h2>
+        <div className="bg-gray-800 rounded-lg p-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+            <div>
+              <h3 className="text-lg font-semibold">Snapshot ID: {snapshot.snapshot_id}</h3>
+              <p className="text-gray-400 flex items-center">
+                <Clock className="inline-block mr-2 h-4 w-4" />
+                Fetched {formattedSnapshotDate}
+              </p>
+            </div>
+            
+            <div className="mt-4 md:mt-0">
+              <Button path={`/items/${type}/${identifier}/orderbook`} variant="outline" size="sm">
+                <div className="flex items-center">
+                  <Database className="mr-2 h-4 w-4" />
+                  Full Order Book
+                </div>
+              </Button>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-gray-900 rounded-lg p-4">
+              <h4 className="text-orange-500 font-medium mb-3">Sell Orders</h4>
+              <div className="text-center py-12">
+                <p className="text-4xl font-bold">{snapshot.total_sell_requests}</p>
+                <p className="text-gray-400 mt-2">Total sell requests</p>
+              </div>
+            </div>
+            
+            <div className="bg-gray-900 rounded-lg p-4">
+              <h4 className="text-green-500 font-medium mb-3">Buy Orders</h4>
+              <div className="text-center py-12">
+                <p className="text-4xl font-bold">{snapshot.total_buy_requests}</p>
+                <p className="text-gray-400 mt-2">Total buy requests</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

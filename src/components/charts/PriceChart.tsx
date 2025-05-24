@@ -20,7 +20,6 @@ export default function PriceChart({ data, className = "w-full h-64" }: PriceCha
   useEffect(() => {
     if (!chartRef.current) return;
 
-    // Destroy existing chart if it exists
     if (chartInstance.current) {
       chartInstance.current.destroy();
     }
@@ -28,7 +27,6 @@ export default function PriceChart({ data, className = "w-full h-64" }: PriceCha
     const ctx = chartRef.current.getContext("2d");
     if (!ctx) return;
 
-    // Sort data by date
     const sortedData = [...data].sort((a, b) => 
       new Date(a.date).getTime() - new Date(b.date).getTime()
     );
@@ -40,7 +38,6 @@ export default function PriceChart({ data, className = "w-full h-64" }: PriceCha
 
     const prices = sortedData.map(d => d.price / 100);
 
-    // Create chart configuration
     const config: ChartConfiguration = {
       type: "line",
       data: {
@@ -66,7 +63,7 @@ export default function PriceChart({ data, className = "w-full h-64" }: PriceCha
         scales: {
           x: {
             grid: {
-              display: false,
+              display: true,
               color: "rgba(255, 255, 255, 0.1)"
             },
             ticks: {
@@ -76,6 +73,8 @@ export default function PriceChart({ data, className = "w-full h-64" }: PriceCha
             }
           },
           y: {
+            min: Math.round(Math.min(...prices) * 0.5),
+            max: Math.round(Math.max(...prices) * 1.5),
             grid: {
               color: "rgba(255, 255, 255, 0.1)"
             },
@@ -98,14 +97,25 @@ export default function PriceChart({ data, className = "w-full h-64" }: PriceCha
               }
             }
           }
-        }
+        },
+        interaction: {
+          mode: "nearest",
+          axis: "x",
+          intersect: false,
+        },
+        elements: {
+          line: {
+            borderJoinStyle: "round",
+          },
+          point: {
+            hoverBorderWidth: 2,
+          },
+        },
       }
     };
 
-    // Create the chart
     chartInstance.current = new Chart(ctx, config);
 
-    // Cleanup function
     return () => {
       if (chartInstance.current) {
         chartInstance.current.destroy();

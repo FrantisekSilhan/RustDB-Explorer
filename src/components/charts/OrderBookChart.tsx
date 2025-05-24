@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import { Order } from "@/utils/types";
 import { Chart, ChartConfiguration } from "chart.js/auto";
 
@@ -18,94 +18,31 @@ export default function OrderBookChart({
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstance = useRef<Chart | null>(null);
 
-  const { buyData, sellData, allPrices, buyPriceIndexes, sellPriceIndexes } = useMemo(() => {
-    const sortedBuyOrders = [...buyOrders].sort((a, b) => b.price - a.price);
-    const sortedSellOrders = [...sellOrders].sort((a, b) => a.price - b.price);
+  const buyData = useMemo(
+    () =>
+      buyOrders
+        .slice()
+        .reverse()
+        .map((order) => ({
+          x: order.price / 100,
+          y: order.cumulative_quantity,
+        })),
+    [buyOrders]
+  );
 
-    let buyRunningTotal = 0;
-    const buyPoints = sortedBuyOrders.map((order) => {
-      buyRunningTotal += order.quantity;
-      return {
-        price: order.price / 100,
-        cumulative: buyRunningTotal,
-      };
-    });
+  const sellData = useMemo(
+    () =>
+      sellOrders.map((order) => ({
+        x: order.price / 100,
+        y: order.cumulative_quantity,
+      })),
+    [sellOrders]
+  );
 
-    let sellRunningTotal = 0;
-    const sellPoints = sortedSellOrders.map((order) => {
-      sellRunningTotal += order.quantity;
-      return {
-        price: order.price / 100,
-        cumulative: sellRunningTotal,
-      };
-    });
-
-    const buyPrices = buyPoints.map((p) => p.price);
-    const sellPrices = sellPoints.map((p) => p.price);
-    
-    const minBuyPrice = buyPrices.length > 0 ? Math.min(...buyPrices) : 0;
-    const maxBuyPrice = buyPrices.length > 0 ? Math.max(...buyPrices) : 0;
-    const minSellPrice = sellPrices.length > 0 ? Math.min(...sellPrices) : 0;
-    const maxSellPrice = sellPrices.length > 0 ? Math.max(...sellPrices) : 0;
-
-    const allOrderPrices = [...buyPrices, ...sellPrices];
-    const minPrice = Math.min(...allOrderPrices);
-    const maxPrice = Math.max(...allOrderPrices);
-
-    const priceStep = 0.01;
-
-    const prices: number[] = [];
-    for (let price = minPrice; price <= maxPrice; price += priceStep) {
-      prices.push(Math.round(price * 100) / 100);
-    }
-
-    const buyDataPoints = prices.map((price) => {
-      if (price < minBuyPrice || price > maxBuyPrice) {
-        return null;
-      }
-      
-      let maxCumulative = 0;
-      for (let i = 0; i < buyPoints.length; i++) {
-        if (buyPoints[i].price >= price) {
-          maxCumulative = Math.max(maxCumulative, buyPoints[i].cumulative);
-        }
-      }
-      
-      return maxCumulative > 0 ? maxCumulative : null;
-    });
-
-    const sellDataPoints = prices.map((price) => {
-      if (price < minSellPrice || price > maxSellPrice) {
-        return null;
-      }
-      
-      let maxCumulative = 0;
-      for (let i = 0; i < sellPoints.length; i++) {
-        if (sellPoints[i].price <= price) {
-          maxCumulative = Math.max(maxCumulative, sellPoints[i].cumulative);
-        }
-      }
-      
-      return maxCumulative > 0 ? maxCumulative : null;
-    });
-
-    const buyPriceIndexes = buyPoints.map((p) => ({
-      price: p.price,
-      index: prices.findIndex((x) => Math.abs(x - p.price) < 0.0001),
-    }));
-    const sellPriceIndexes = sellPoints.map((p) => ({
-      price: p.price,
-      index: prices.findIndex((x) => Math.abs(x - p.price) < 0.0001),
-    }));
-
-    return {
-      buyData: buyDataPoints,
-      sellData: sellDataPoints,
-      allPrices: prices,
-      buyPriceIndexes,
-      sellPriceIndexes,
-    };
-  }, [buyOrders, sellOrders]);
+  const [minPrice, maxPrice] = useMemo(() => {
+    const allPrices = [...buyData, ...sellData].map((d) => d.x);
+    return [Math.min(...allPrices), Math.max(...allPrices)];
+  }, [buyData, sellData]);
 
   useEffect(() => {
     if (!chartRef.current) return;
@@ -120,14 +57,13 @@ export default function OrderBookChart({
     const config: ChartConfiguration = {
       type: "line",
       data: {
-        labels: allPrices.map((price) => price.toFixed(2)),
         datasets: [
           {
             label: "Buy Orders",
             data: buyData,
             borderColor: "rgba(72, 187, 120, 1)",
-            backgroundColor: "rgba(72, 187, 120, 0.5)",
-            borderWidth: 2,
+            backgroundColor: "rgba(72, 187, 120, 0.4)",
+            borderWidth: 3,
             fill: true,
             tension: 0,
             spanGaps: false,
@@ -138,8 +74,8 @@ export default function OrderBookChart({
             label: "Sell Orders",
             data: sellData,
             borderColor: "rgba(244, 67, 54, 1)",
-            backgroundColor: "rgba(244, 67, 54, 0.5)",
-            borderWidth: 2,
+            backgroundColor: "rgba(244, 67, 54, 0.4)",
+            borderWidth: 3,
             fill: true,
             tension: 0,
             spanGaps: false,
@@ -153,101 +89,55 @@ export default function OrderBookChart({
         maintainAspectRatio: false,
         scales: {
           x: {
-            title: {
+            type: "linear",
+            min: minPrice,
+            max: maxPrice,
+            grid: {
               display: true,
-              text: "Price ($)",
-              color: "rgba(255, 255, 255, 0.7)",
+              color: "rgba(255, 255, 255, 0.1)",
             },
             ticks: {
               color: "rgba(255, 255, 255, 0.7)",
-              maxRotation: 0,
-              minRotation: 0,
-              maxTicksLimit: 10,
-            },
-            grid: {
-              color: "rgba(255, 255, 255, 0.1)",
+              count: 10,
+              callback: (value) => `$${Number(value).toFixed(2)}`,
             },
           },
           y: {
+            min: 0,
+            suggestedMax: Math.max(
+              ...buyData.map((d) => d.y),
+              ...sellData.map((d) => d.y)
+            ) * 1.1,
             title: {
               display: true,
               text: "Cumulative Quantity",
               color: "rgba(255, 255, 255, 0.7)",
             },
-            ticks: {
-              color: "rgba(255, 255, 255, 0.7)",
-            },
             grid: {
               color: "rgba(255, 255, 255, 0.1)",
             },
-            beginAtZero: true,
+            ticks: {
+              color: "rgba(255, 255, 255, 0.7)",
+            },
           },
         },
         plugins: {
           legend: {
             labels: {
               color: "rgba(255, 255, 255, 0.7)",
-            },
+            }
           },
           tooltip: {
-            enabled: true,
-            mode: "index",
-            intersect: false,
-            position: "nearest",
             callbacks: {
               label: function (context) {
-                const hoveredPrice = parseFloat(context.label);
-
-                const allIndexes = [
-                  ...buyPriceIndexes,
-                  ...sellPriceIndexes,
-                ].filter((p) => p.index !== -1);
-
-                if (allIndexes.length === 0) return "";
-
-                let closest = allIndexes[0];
-                let minDiff = Math.abs(hoveredPrice - closest.price);
-                for (let i = 1; i < allIndexes.length; i++) {
-                  const diff = Math.abs(hoveredPrice - allIndexes[i].price);
-                  if (diff < minDiff) {
-                    minDiff = diff;
-                    closest = allIndexes[i];
-                  }
-                }
-
-                const dataset = context.datasetIndex === 0 ? buyData : sellData;
-                const value = dataset[closest.index];
-
-                if (value == null) return "";
-
-                const label = context.dataset.label || "";
-                return `${label}: ${value.toLocaleString()}`;
+                const isBuy = context.datasetIndex === 0;
+                const direction = isBuy ? "Buy" : "Sell";
+                return `${direction} orders ${context.parsed.y}`;
               },
-              title: function (tooltipItems) {
-                if (!tooltipItems || !tooltipItems[0]) return "";
-                const hoveredPrice = parseFloat(tooltipItems[0].label);
-
-                const allIndexes = [
-                  ...buyPriceIndexes,
-                  ...sellPriceIndexes,
-                ].filter((p) => p.index !== -1);
-
-                if (allIndexes.length === 0) return "";
-
-                const datasetIndex = tooltipItems[0].datasetIndex;
-                const direction = datasetIndex === 1 ? "or lower" : "or higher";
-
-                let closest = allIndexes[0];
-                let minDiff = Math.abs(hoveredPrice - closest.price);
-                for (let i = 1; i < allIndexes.length; i++) {
-                  const diff = Math.abs(hoveredPrice - allIndexes[i].price);
-                  if (diff < minDiff) {
-                    minDiff = diff;
-                    closest = allIndexes[i];
-                  }
-                }
-
-                return `Price: $${closest.price.toFixed(2)} ${direction}`;
+              title: function (context) {
+                const isBuy = context[0].datasetIndex === 0;
+                const direction = isBuy ? "or higher" : "or lower";
+                return `Price: $${context[0].parsed.x.toFixed(2)} ${direction}`;
               },
             },
           },
@@ -275,7 +165,7 @@ export default function OrderBookChart({
         chartInstance.current.destroy();
       }
     };
-  }, [buyData, sellData, allPrices, buyPriceIndexes, sellPriceIndexes]);
+  }, [buyData, sellData, minPrice, maxPrice]);
 
   return (
     <div className={className}>

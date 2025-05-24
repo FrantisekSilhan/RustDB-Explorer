@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import OrderBookChart from "@/components/charts/OrderBookChart";
 import { formatDistanceToNow } from "date-fns";
 import OrderBook from "@/components/items/OrderBook";
+//import PriceChart from "@/components/charts/PriceChart";
 
 const validTypes = ["item-id", "class-id", "name"];
 
@@ -96,7 +97,7 @@ export default async function OrderBookPage({ params }: OrderBookPageProps) {
   
   const snapshotDate = new Date(orderBook.fetched_at);
   const formattedSnapshotDate = formatDistanceToNow(snapshotDate, { addSuffix: true });
-  
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
@@ -128,19 +129,30 @@ export default async function OrderBookPage({ params }: OrderBookPageProps) {
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-gray-900 p-3 rounded-lg">
             <p className="text-sm text-gray-400">
-              <span className="inline-block w-3 h-3 bg-green-500 rounded-full mr-2"></span>
+              <span className="inline-block w-3 h-3 bg-green-500 rounded-full mr-2 -mb-0.25"></span>
               Buy Orders: {orderBook.total_buy_requests}
             </p>
           </div>
           
           <div className="bg-gray-900 p-3 rounded-lg">
             <p className="text-sm text-gray-400">
-              <span className="inline-block w-3 h-3 bg-red-500 rounded-full mr-2"></span>
+              <span className="inline-block w-3 h-3 bg-red-500 rounded-full mr-2 -mb-0.25"></span>
               Sell Orders: {orderBook.total_sell_requests}
             </p>
           </div>
         </div>
       </div>
+
+      {/*<div className="bg-gray-800 rounded-lg p-6 mb-8">
+        <h2 className="text-xl font-bold mb-4">Price Chart</h2>
+        
+        <Suspense fallback={<div className="h-80 bg-gray-900 animate-pulse rounded-lg" />}>
+          <PriceChart
+            data={placeholderPriceData}
+            className="w-full h-80 md:h-96"
+          />
+        </Suspense>
+      </div>*/}
       
       <OrderBook orderBook={orderBook} />
     </div>
