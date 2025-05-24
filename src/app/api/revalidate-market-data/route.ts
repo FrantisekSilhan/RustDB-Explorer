@@ -14,13 +14,13 @@ export const POST = async (request: NextRequest) => {
   }
 
   const body = await request.json();
-  const { itemId, classId, name } = body;
+  const { item_id, class_id, name } = body;
 
-  if (itemId) {
-    await revalidateTag(`item-${itemId}`);
+  if (item_id) {
+    await revalidateTag(`item-${item_id}`);
   }
-  if (classId) {
-    await revalidateTag(`class-${classId}`);
+  if (class_id) {
+    await revalidateTag(`class-${class_id}`);
   }
   if (name) {
     await revalidateTag(`name-${name.toLowerCase().replace(/\s+/g, "-")}`);
@@ -29,8 +29,8 @@ export const POST = async (request: NextRequest) => {
   return NextResponse.json({
     success: true,
     message: "Market data revalidated successfully",
-    itemId,
-    classId,
+    item_id,
+    class_id,
     name,
   });
 };
