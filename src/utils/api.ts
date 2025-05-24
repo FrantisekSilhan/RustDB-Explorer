@@ -12,14 +12,16 @@ import {
 const API_BASE_URL = "https://api.watercollector.icu/api/v1";
 
 async function fetchApi<T>({endpoint, options, tags}: {endpoint: string, options?: RequestInit, tags?: string[]}): Promise<T> {
-  const nextTags = tags ? { tags } : undefined;
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
       ...options?.headers,
     },
-    next: nextTags,
+    next: {
+      tags: tags ? tags : undefined,
+      revalidate: tags ? Infinity : 60,
+    },
   });
   
   if (!response.ok) {
