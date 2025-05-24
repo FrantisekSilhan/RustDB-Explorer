@@ -30,7 +30,7 @@ export default function OrderBook({ orderBook }: OrderBookProps) {
             <div className="max-h-[469px] overflow-y-auto">
               <table className="w-full">
                 <tbody className="divide-y divide-gray-700">
-                  {orderBook.sell_orders && orderBook.sell_orders.length > 0 && orderBook.sell_orders.map((order, index) => (
+                  {(orderBook.sell_orders && orderBook.sell_orders.length > 0) && orderBook.sell_orders.map((order, index) => (
                     <tr key={`sell-${index}`}>
                       <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-white">
                         {formatPrice(order.price)}
@@ -43,7 +43,7 @@ export default function OrderBook({ orderBook }: OrderBookProps) {
                       </td>
                     </tr>
                   ))}
-                  {!orderBook.sell_orders || orderBook.sell_orders.length === 0 && (
+                  {(!orderBook.sell_orders || orderBook.sell_orders.length === 0) && (
                     <tr>
                       <td
                         colSpan={3}
@@ -82,7 +82,7 @@ export default function OrderBook({ orderBook }: OrderBookProps) {
             <div className="max-h-[469px] overflow-y-auto">
               <table className="w-full">
                 <tbody className="divide-y divide-gray-700">
-                  {orderBook.buy_orders && orderBook.buy_orders.length > 0 && orderBook.buy_orders.map((order, index) => (
+                  {(orderBook.buy_orders && orderBook.buy_orders.length > 0) && orderBook.buy_orders.map((order, index) => (
                     <tr key={`buy-${index}`}>
                       <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-white">
                         {formatPrice(order.price)}
@@ -95,7 +95,7 @@ export default function OrderBook({ orderBook }: OrderBookProps) {
                       </td>
                     </tr>
                   ))}
-                  {!orderBook.buy_orders || orderBook.buy_orders.length === 0 && (
+                  {(!orderBook.buy_orders || orderBook.buy_orders.length === 0) && (
                     <tr>
                       <td
                         colSpan={3}
