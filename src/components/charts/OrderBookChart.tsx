@@ -5,8 +5,8 @@ import { Order } from "@/utils/types";
 import { Chart, ChartConfiguration } from "chart.js/auto";
 
 interface OrderBookChartProps {
-  sellOrders: Order[];
-  buyOrders: Order[];
+  sellOrders: Order[] | null;
+  buyOrders: Order[] | null;
   className?: string;
 }
 
@@ -20,6 +20,8 @@ export default function OrderBookChart({
 
   const buyData = useMemo(
     () =>
+      !buyOrders ?
+      [] :
       buyOrders
         .slice()
         .reverse()
@@ -32,6 +34,8 @@ export default function OrderBookChart({
 
   const sellData = useMemo(
     () =>
+      !sellOrders ?
+      [] :
       sellOrders.map((order) => ({
         x: order.price / 100,
         y: order.cumulative_quantity,

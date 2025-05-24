@@ -43,8 +43,8 @@ export interface Snapshot {
   fetched_at: string;
   total_sell_requests: number;
   total_buy_requests: number;
-  lowest_sell_price: number;
-  highest_buy_price: number;
+  lowest_sell_price: number | null;
+  highest_buy_price: number | null;
 }
 
 export interface Order {
@@ -54,11 +54,11 @@ export interface Order {
 }
 
 export interface OrderBook extends Snapshot {
-  sell_orders: Order[];
-  buy_orders: Order[];
+  sell_orders: Order[] | null;
+  buy_orders: Order[] | null;
 }
 
 export interface SnapshotResponse {
-  sell_orders: Order[];
-  buy_orders: Order[];
+  sell_orders: Order[] | null;
+  buy_orders: Order[] | null;
 }
