@@ -1,0 +1,36 @@
+import { revalidateTag } from "next/cache";
+import { NextRequest, NextResponse } from "next/server";
+
+export const POST = async (request: NextRequest) => {
+  const apiKey = request.headers.get("x-api-key");
+  if (apiKey !== process.env.REVALIDATE_API_KEY) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Invalid API key",
+      },
+      { status: 403 }
+    );
+  }
+
+  const body = await request.json();
+  const { itemId, classId, name } = body;
+
+  if (itemId) {
+    await revalidateTag(`item-${itemId}`);
+  }
+  if (classId) {
+    await revalidateTag(`class-${classId}`);
+  }
+  if (name) {
+    await revalidateTag(`name-${name.toLowerCase().replace(/\s+/g, "-")}`);
+  }
+
+  return NextResponse.json({
+    success: true,
+    message: "Market data revalidated successfully",
+    itemId,
+    classId,
+    name,
+  });
+};

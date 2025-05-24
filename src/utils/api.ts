@@ -11,14 +11,15 @@ import {
 
 const API_BASE_URL = "https://api.watercollector.icu/api/v1";
 
-async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
+async function fetchApi<T>({endpoint, options, tags}: {endpoint: string, options?: RequestInit, tags?: string[]}): Promise<T> {
+  const nextTags = tags ? { tags } : undefined;
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
       ...options?.headers,
     },
-    next: { revalidate: 60 },
+    next: nextTags,
   });
   
   if (!response.ok) {
@@ -39,65 +40,65 @@ export const api = {
   items: {
     getAll: (page = 1, limit = 20, search?: string) => {
       const searchParam = search ? `&search=${search}` : "";
-      return fetchApi<ItemsResponse>(`/items?page=${page}&limit=${limit}${searchParam}`);
+      return fetchApi<ItemsResponse>({endpoint: `/items?page=${page}&limit=${limit}${searchParam}`});
     },
     
     getRecent: (limit = 10) => {
-      return fetchApi<Item[]>(`/items/recent?limit=${limit}`);
+      return fetchApi<Item[]>({endpoint: `/items/recent?limit=${limit}`});
     },
     
     getByItemId: (itemId: number | string) => {
-      return fetchApi<Item>(`/items/item-id/${itemId}`);
+      return fetchApi<Item>({endpoint: `/items/item-id/${itemId}`, tags: [`item-${itemId}`]});
     },
     
     getByClassId: (classId: number | string) => {
-      return fetchApi<Item>(`/items/class-id/${classId}`);
+      return fetchApi<Item>({endpoint: `/items/class-id/${classId}`, tags: [`class-${classId}`]});
     },
     
     getByName: (name: string) => {
-      return fetchApi<Item>(`/items/name/${name}`);
+      return fetchApi<Item>({endpoint: `/items/name/${name}`, tags: [`name-${name.toLowerCase().replace(/\s+/g, "-")}`]});
     },
     
     getMinimal: () => {
-      return fetchApi<MinimalItemsResponse>("/items/minimal");
+      return fetchApi<MinimalItemsResponse>({endpoint: "/items/minimal"});
     },
     
     getMinimalLast: () => {
-      return fetchApi<MinimalItemsLastResponse>("/items/minimal/last");
+      return fetchApi<MinimalItemsLastResponse>({endpoint: "/items/minimal/last"});
     },
     
     getMinimalDiff: (from: string) => {
-      return fetchApi<MinimalItemsDiffResponse>(`/items/minimal/diff?from=${from}`);
+      return fetchApi<MinimalItemsDiffResponse>({endpoint: `/items/minimal/diff?from=${from}`});
     },
     
     getSnapshotByItemId: (itemId: number | string) => {
-      return fetchApi<Snapshot>(`/items/item-id/${itemId}/snapshot`);
+      return fetchApi<Snapshot>({endpoint: `/items/item-id/${itemId}/snapshot`, tags: [`item-${itemId}`]});
     },
     
     getSnapshotByClassId: (classId: number | string) => {
-      return fetchApi<Snapshot>(`/items/class-id/${classId}/snapshot`);
+      return fetchApi<Snapshot>({endpoint: `/items/class-id/${classId}/snapshot`, tags: [`class-${classId}`]});
     },
     
     getSnapshotByName: (name: string) => {
-      return fetchApi<Snapshot>(`/items/name/${name}/snapshot`);
+      return fetchApi<Snapshot>({endpoint: `/items/name/${name}/snapshot`, tags: [`name-${name.toLowerCase().replace(/\s+/g, "-")}`]});
     },
     
     getOrderBookByItemId: (itemId: number | string) => {
-      return fetchApi<OrderBook>(`/items/item-id/${itemId}/orderbook`);
+      return fetchApi<OrderBook>({endpoint: `/items/item-id/${itemId}/orderbook`, tags: [`item-${itemId}`]});
     },
     
     getOrderBookByClassId: (classId: number | string) => {
-      return fetchApi<OrderBook>(`/items/class-id/${classId}/orderbook`);
+      return fetchApi<OrderBook>({endpoint: `/items/class-id/${classId}/orderbook`, tags: [`class-${classId}`]});
     },
     
     getOrderBookByName: (name: string) => {
-      return fetchApi<OrderBook>(`/items/name/${name}/orderbook`);
+      return fetchApi<OrderBook>({endpoint: `/items/name/${name}/orderbook`, tags: [`name-${name.toLowerCase().replace(/\s+/g, "-")}`]});
     },
   },
   
   snapshots: {
     getById: (snapshotId: number | string) => {
-      return fetchApi<SnapshotResponse>(`/snapshots/${snapshotId}`);
+      return fetchApi<SnapshotResponse>({endpoint: `/snapshots/${snapshotId}`, tags: [`snapshot-${snapshotId}`]});
     },
   },
 };
