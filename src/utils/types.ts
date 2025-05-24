@@ -43,6 +43,8 @@ export interface Snapshot {
   fetched_at: string;
   total_sell_requests: number;
   total_buy_requests: number;
+  lowest_sell_price: number;
+  highest_buy_price: number;
 }
 
 export interface Order {

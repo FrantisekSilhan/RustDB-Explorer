@@ -45,13 +45,13 @@ export default function ItemDetails({ item, snapshot, type, identifier }: ItemDe
             </div>
             
             <div className="bg-gray-800 rounded-lg p-4">
-              <h3 className="text-gray-400 text-sm mb-1">Sell Orders</h3>
-              <p className="text-lg font-medium">{snapshot.total_sell_requests}</p>
+              <h3 className="text-gray-400 text-sm mb-1">Lowest Sell Price</h3>
+              <p className="text-lg font-medium">${(snapshot.lowest_sell_price / 100).toFixed(2)}</p>
             </div>
             
             <div className="bg-gray-800 rounded-lg p-4">
-              <h3 className="text-gray-400 text-sm mb-1">Buy Orders</h3>
-              <p className="text-lg font-medium">{snapshot.total_buy_requests}</p>
+              <h3 className="text-gray-400 text-sm mb-1">Highest Buy Price</h3>
+              <p className="text-lg font-medium">${(snapshot.highest_buy_price / 100).toFixed(2)}</p>
             </div>
           </div>
           

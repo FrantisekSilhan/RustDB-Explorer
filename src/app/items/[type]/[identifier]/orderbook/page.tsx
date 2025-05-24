@@ -5,8 +5,8 @@ import { ArrowLeft, Clock } from "lucide-react";
 import { api } from "@/utils/api";
 import { Button } from "@/components/ui/Button";
 import OrderBookChart from "@/components/charts/OrderBookChart";
-import { formatDistanceToNow } from "date-fns";
 import OrderBook from "@/components/items/OrderBook";
+import { formatRelativeTime } from "@/utils/utils";
 //import PriceChart from "@/components/charts/PriceChart";
 
 const validTypes = ["item-id", "class-id", "name"];
@@ -95,8 +95,7 @@ export default async function OrderBookPage({ params }: OrderBookPageProps) {
     notFound();
   }
   
-  const snapshotDate = new Date(orderBook.fetched_at);
-  const formattedSnapshotDate = formatDistanceToNow(snapshotDate, { addSuffix: true });
+  const formattedSnapshotDate = formatRelativeTime(orderBook.fetched_at);
 
   return (
     <div className="container mx-auto px-4 py-8">
