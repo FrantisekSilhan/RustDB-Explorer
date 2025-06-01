@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# RustDB-Explorer
 
-## Getting Started
+**RustDB-Explorer** is a web frontend for browsing Rust skins and item data, powered by [RustDB-API](https://github.com/FrantisekSilhan/RustDB-API).
 
-First, run the development server:
+**Live site:** [https://watercollector.icu/](https://watercollector.icu/)
+
+## Features
+
+- Search and browse all Rust skins and items
+- View item details, price history, and order books
+- Fast, responsive UI
+- Powered by the RustDB-API
+
+## Development
+
+Clone the repository and run locally:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/FrantisekSilhan/RustDB-Explorer.git
+cd RustDB-Explorer
+npm install
+npm run build
+npm run start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Related Projects
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- [RustDB](https://github.com/FrantisekSilhan/RustDB) — Main database
+- [RustDB-API](https://github.com/FrantisekSilhan/RustDB-API) — Public API for accessing RustDB data
+- [RustDB-Explorer](https://github.com/FrantisekSilhan/RustDB-Explorer) — Web frontend for browsing Rust items
+- [RustDB-Inventory](https://github.com/FrantisekSilhan/RustDB-Inventory) — User inventory database
+- [RustDB-Inventory-API](https://github.com/FrantisekSilhan/RustDB-Inventory-API) — API for user inventory database
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## License
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+AGPL-3.0
