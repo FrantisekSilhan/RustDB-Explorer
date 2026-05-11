@@ -2,7 +2,7 @@
 
 **RustDB-Explorer** is a web frontend for browsing Rust skins and item data, powered by [RustDB-API](https://github.com/FrantisekSilhan/RustDB-API).
 
-**Live site:** [https://watercollector.icu/](https://watercollector.icu/)
+**Live site:** [https://rustdb.dev.pvq.cz/](https://rustdb.dev.pvq.cz/)
 
 ## Features
 
